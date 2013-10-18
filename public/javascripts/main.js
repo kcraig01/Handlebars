@@ -15,7 +15,7 @@ $(function(){
                         $.get('/searchresult', data, function(data) {
                                  console.log(data)
                                  // $('#testdiv').html(str);
-                                $('#testdiv').html(searchTemplate(data))
+                                $results.html(searchTemplate(data))
                         });
 
 
