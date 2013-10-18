@@ -8,29 +8,8 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-
-var app = express();
-
-// all environments
-app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
-
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
-
-app.get('/search', function(req, res){
-	res.render('index',{
-		title:"Handlebars test",
-	"programming" : {
+var data = {
+		"programming": {
 		"Python" : {
 			"desc" : "a high-level general-purpose programming language."
 		},
@@ -52,25 +31,73 @@ app.get('/search', function(req, res){
 		"JavaScript" : {
 			"desc" : "an object-oriented computer programming language commonly used to create interactive effects within web browsers."
 		}
-	},
-	"search engines" : {
+		},
+	"searchengines" : {
 		"google" : {
 			"desc" : "Google Inc. is an American multinational corporation specializing in Internet-related services and products. These include search, cloud computing, software, and online advertising technologies. Most of its profits are derived from AdWords"
 		},
 		"ask" : {
-			"desc" : "sk.com is a question answering-focused web search engine founded in 1996 by Garrett Gruener and David Warthen in Berkeley, California. The original software was implemented by Gary Chevsky from his own design."
+			"desc" : "ask.com is a question answering-focused web search engine founded in 1996 by Garrett Gruener and David Warthen in Berkeley, California. The original software was implemented by Gary Chevsky from his own design."
 		},
 		"alta vista" : {
 			"desc" : "AltaVista was an early web search engine. It was once one of the most popular search engines, but it lost ground with the rise of Google and was purchased in 2003 by Yahoo!, which retained the brand but based all AltaVista searches on its own search engine."
-	}
+		}
+	},
+	};
+var app = express();
+
+// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
+
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
 }
+
+app.get('/search', function(req, res){
+	res.render('index',{
+		title:"The Greatest Search Engine in all of the Land"
+	})
+
 });
 
-app.post('/search', function(req, res){
-	res.send({success: 'Woohoo! Thanks for submitting!'})
-	console.log("something")
+app.get('/searchresult', function(req, res){
+	var searched= req.query.searchedTerm;
+	var searchProgram = searched.slice(0,1).toUpperCase() + searched.slice(1);
+	var searchSearchEngine = searched.slice(0,1).toLowerCase() + searched.slice(1);
+	console.log(searchSearchEngine)
+		if (searchProgram in data.programming){
+			var searchResult = data.programming[searchProgram]
+			console.log(searchResult);
+			res.send(searchResult);
+			}
+		
+		else if (searchSearchEngine in data.searchengines){
+			var searchResult = data.searchengines[searchSearchEngine]
+			console.log(searchResult)
+			res.send(searchResult);
+			}
+		
+	// }
+	// 	else if (searched in data.searchengines){
+	// 		var searchresult = data.searchengines.[searched].desc 
+	// 		return searchresult;
+	// 	}
+		else 
+		var searchResult = "No search result. Please try again."
+		console.log(searchResult)
+		res.send({desc: searchResult});
+		
+	
 
-})
 });
 
 http.createServer(app).listen(app.get('port'), function(){

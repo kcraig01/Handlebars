@@ -5,25 +5,25 @@ $(function(){
 
         $('#searchterm').on('keyup', function(e){
                 if(e.keyCode === 13){
-                        
-                        // do something
-                        // e.preventDefault();
-                        var val = $(this).val();
-                        console.log($(this).val());
+                        var data = {
+                                searchedTerm: $(this).val()
+                        };
+
                         // $.get('/search', {search : val}, function(data){
                         //         $results.html(searchTemplate(data))
                         // });
-                        $.post('/search', val,function(data){
-                                console.log('thing')
-                                $results.text("hi")
-                                
-                        })
+                        $.get('/searchresult', data, function(data) {
+                                 console.log(data)
+                                 // $('#testdiv').html(str);
+                                $('#testdiv').html(searchTemplate(data))
+                        });
 
 
                         // $.post('/search', {search : val}, function(data){
                         //         console.log('date:', data)
                         //         $results.html(searchTemplate(data))
-                        // });
-                }
-        });
+                        // });s
+        
+        }
+});
 });
